@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { margin: 0; background: #111; color: white; font-family: sans-serif; }
+    .container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+    .item {
+      background: #333;
+      padding: 20px;
+      font-size: 2rem;
+    }
+
+    /* BREIT = NEBENEINANDER */
+    @media (min-aspect-ratio: 1/1) {
+      .container { flex-direction: row; background: #003300; }
+      .info::after { content: " (LANDSCAPE/BREIT - nebeneinander)"; }
+    }
+
+    /* HOCH = ÜBEREINANDER */
+    @media (max-aspect-ratio: 1/1) {
+      .container { flex-direction: column; background: #330000; }
+      .info::after { content: " (PORTRAIT/HOCH - übereinander)"; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="item">Jahre</div>
+    <div class="item">Monate</div>
+    <div class="item">Tage</div>
+    <div class="item">Stunden</div>
+    <div class="item">Minuten</div>
+    <div class="item">Sekunden</div>
+  </div>
+  <div class="info" style="position:fixed;top:10px;left:10px;"></div>
+</body>
+</html>

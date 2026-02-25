@@ -1,0 +1,223 @@
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(35, 35, 35);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+}
+
+.App {
+  width: 95vw;
+  height: 95vh;
+  display: grid;
+  grid-template-rows: 1fr auto 1fr;
+  align-items: center;
+  justify-items: center;
+}
+
+.title-zone {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  padding-bottom: 3vh;
+}
+
+.countdown-title {
+  color: rgb(75, 75, 75);
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(1rem, 2.5vw, 2.5rem);
+  font-weight: 300;
+  margin: 0;
+  text-align: center;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ===== FLIPS CONTAINER ===== */
+.flips {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 3vw;
+}
+
+.countdown-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.countdown-header {
+  font-family: arial;
+  color: rgb(197, 197, 197);
+}
+
+/* ===== BREIT (aspect-ratio > 1) = NEBENEINANDER ===== */
+@media (min-aspect-ratio: 1/1) {
+  .flips {
+    flex-direction: row;
+    gap: calc(3vw * var(--flap-scale, 1));
+  }
+  .countdown-display {
+    flex-direction: column;
+  }
+  .countdown-header {
+    margin-top: 1vh;
+    font-size: clamp(0.6rem, 1.2vw, 1rem);
+  }
+  .XL [data-kind="digit"] {
+    font-size: clamp(30px, calc(14vw * var(--flap-scale, 1)), 180px) !important;
+    line-height: clamp(32px, calc(15vw * var(--flap-scale, 1)), 195px) !important;
+  }
+}
+
+/* ===== HOCH (aspect-ratio < 1) = ÜBEREINANDER ===== */
+@media (max-aspect-ratio: 1/1) {
+  .flips {
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 0;
+  }
+  .countdown-display {
+    flex-direction: row;
+    gap: 3vw;
+  }
+  .countdown-header {
+    min-width: 22vw;
+    font-size: clamp(0.6rem, 3vw, 1rem);
+  }
+  .XL [data-kind="digit"] {
+    font-size: clamp(30px, calc(25vw * var(--flap-scale, 1)), 140px) !important;
+    line-height: clamp(32px, calc(26vw * var(--flap-scale, 1)), 150px) !important;
+  }
+}
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #222;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #444;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: #fff;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.font-category {
+  margin-bottom: 1.5rem;
+}
+
+.font-category:last-child {
+  margin-bottom: 0;
+}
+
+.modal-body h3 {
+  color: #888;
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+}
+
+.font-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.font-option {
+  background-color: #2a2a2a;
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.font-option:hover {
+  border-color: #666;
+  background-color: #333;
+}
+
+.font-option.selected {
+  border-color: #4a9eff;
+  background-color: #1a2a3a;
+}
+
+.font-name {
+  color: #aaa;
+  font-size: 0.7rem;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.font-preview {
+  background-color: #111;
+  border-radius: 4px;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+}
+
+.preview-digits {
+  color: #eee;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+}
