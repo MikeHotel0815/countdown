@@ -5,7 +5,7 @@ https://count.himmelreich.cloud.
 
 ## Parameter
 
-- `?date=2029-03-29T16:00` Zieldatum (Standard: 29.03.2029 16:00)
+- `?date=2029-03-29T16:00` Zieldatum in lokaler Zeit, auch `2029-03-29` (Standard: 29.03.2029 16:00)
 - `?titel=Restdienstzeit` Überschrift
 
 Liegt das Datum in der Vergangenheit, zählt die Anzeige hoch.
