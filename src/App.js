@@ -33,8 +33,8 @@ const STORAGE_KEY = "countdown-settings";
 
 function loadSettings() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return JSON.parse(saved);
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (Number.isInteger(saved?.fontIndex) && AVAILABLE_FONTS[saved.fontIndex]) return saved;
   } catch (e) {}
   return { fontIndex: 0 };
 }
@@ -43,6 +43,15 @@ function saveSettings(settings) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
   } catch (e) {}
+}
+
+function loadFont(font) {
+  if (!document.querySelector(`link[href="${font.url}"]`)) {
+    const link = document.createElement("link");
+    link.href = font.url;
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+  }
 }
 
 function getDateFromUrl() {
@@ -67,6 +76,11 @@ const FONT_CATEGORIES = [
 ];
 
 function SettingsModal({ isOpen, onClose, settings, onSettingsChange }) {
+  useEffect(() => {
+    // Vorschau-Fonts erst laden, wenn die Einstellungen geöffnet werden
+    if (isOpen) AVAILABLE_FONTS.forEach(loadFont);
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleFontChange = (index) => {
@@ -118,18 +132,12 @@ function App() {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    AVAILABLE_FONTS.forEach((font) => {
-      if (!document.querySelector(`link[href="${font.url}"]`)) {
-        const link = document.createElement("link");
-        link.href = font.url;
-        link.rel = "stylesheet";
-        document.head.appendChild(link);
-      }
-    });
-  }, []);
+    document.title = title || "Countdown";
+  }, [title]);
 
   useEffect(() => {
     const selectedFont = AVAILABLE_FONTS[settings.fontIndex];
+    loadFont(selectedFont);
     document.documentElement.style.setProperty('--flap-font', selectedFont.family);
     document.documentElement.style.setProperty('--flap-scale', selectedFont.scale);
   }, [settings.fontIndex]);
@@ -160,12 +168,12 @@ function App() {
   }, [targetDate]);
 
   const allItems = [
-    { value: counter.years, label: counter.years === 1 ? 'Jahr' : 'Jahre' },
-    { value: counter.months, label: counter.months === 1 ? 'Monat' : 'Monate' },
-    { value: counter.days, label: counter.days === 1 ? 'Tag' : 'Tage' },
-    { value: counter.hours, label: counter.hours === 1 ? 'Stunde' : 'Stunden' },
-    { value: counter.minutes, label: counter.minutes === 1 ? 'Minute' : 'Minuten' },
-    { value: counter.seconds, label: counter.seconds === 1 ? 'Sekunde' : 'Sekunden' },
+    { unit: "years", value: counter.years, label: counter.years === 1 ? 'Jahr' : 'Jahre' },
+    { unit: "months", value: counter.months, label: counter.months === 1 ? 'Monat' : 'Monate' },
+    { unit: "days", value: counter.days, label: counter.days === 1 ? 'Tag' : 'Tage' },
+    { unit: "hours", value: counter.hours, label: counter.hours === 1 ? 'Stunde' : 'Stunden' },
+    { unit: "minutes", value: counter.minutes, label: counter.minutes === 1 ? 'Minute' : 'Minuten' },
+    { unit: "seconds", value: counter.seconds, label: counter.seconds === 1 ? 'Sekunde' : 'Sekunden' },
   ];
 
   // Führende Nullwerte ausblenden, aber mindestens Sekunden anzeigen
@@ -181,12 +189,7 @@ function App() {
       </div>
       <div className="flips">
         {items.map((item) => (
-          <div
-            key={item.label}
-            className="countdown-display"
-            onClick={item.label.startsWith('Tag') ? () => setModalOpen(true) : undefined}
-            style={item.label.startsWith('Tag') ? { cursor: 'pointer' } : undefined}
-          >
+          <div key={item.unit} className="countdown-display">
             <FlapDisplay
               className="flip XL"
               chars={counter.isPast ? " 0123456789" : " 9876543210"}
@@ -198,6 +201,15 @@ function App() {
         ))}
       </div>
       <div className="bottom-zone" />
+
+      <button
+        className="settings-button"
+        onClick={() => setModalOpen(true)}
+        aria-label="Einstellungen"
+        title="Einstellungen"
+      >
+        ⚙
+      </button>
 
       <SettingsModal
         isOpen={modalOpen}

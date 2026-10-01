@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css?family=Share&display=swap");
-
 /* FlapDisplay wrapper - digits immer nebeneinander */
 .flip {
   display: flex !important;
