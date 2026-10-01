@@ -58,7 +58,12 @@ function getDateFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const dateParam = params.get("date");
   if (!dateParam) return DEFAULT_DATE;
-  const parsed = new Date(dateParam);
+  // "YYYY-MM-DD", "YYYY-MM-DDTHH:mm[:ss]" oder mit Leerzeichen statt T:
+  // immer als lokale Zeit lesen (new Date() nimmt reine Datumsangaben als UTC)
+  const m = dateParam.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?)?$/);
+  const parsed = m
+    ? new Date(+m[1], m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0), +(m[6] || 0))
+    : new Date(dateParam);
   if (isNaN(parsed.getTime())) return DEFAULT_DATE;
   return parsed;
 }
@@ -161,10 +166,14 @@ function App() {
   const [counter, setCounter] = useState(() => calculateDiff(targetDate));
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    // Auf die volle Sekunde ausrichten, damit der Takt nicht driftet
+    let timeout;
+    const tick = () => {
       setCounter(calculateDiff(targetDate));
-    }, 1000);
-    return () => clearInterval(interval);
+      timeout = setTimeout(tick, 1000 - (Date.now() % 1000));
+    };
+    timeout = setTimeout(tick, 1000 - (Date.now() % 1000));
+    return () => clearTimeout(timeout);
   }, [targetDate]);
 
   const allItems = [
